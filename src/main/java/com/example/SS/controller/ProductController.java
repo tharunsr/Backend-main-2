@@ -26,13 +26,15 @@ public class ProductController {
 //    }
 
 
+
     @GetMapping("/products")
-    public List<ProductDto> sortProducts(@RequestParam(required = false) String name){
-        List<Product> products = (name !=null && !name.isEmpty())?
-                service.getByName(name)
-                :service.getAll() ;
+    public List<ProductDto> getAllProducts() {
+        // Retrieve all products from the service
+        List<Product> products = service.getAll();
+
+        // Map the products to ProductDto objects
         return products.stream()
-                .map(prod -> modelMapper.map(prod,ProductDto.class))
+                .map(prod -> modelMapper.map(prod, ProductDto.class))
                 .toList();
     }
 
