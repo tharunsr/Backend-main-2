@@ -8,7 +8,15 @@ public class ProductDto {
     private String name;
     private String description;
     private int price;
-    private Category category ;
+    private int categoryId;
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public String getName() {
         return name;
@@ -42,11 +50,4 @@ public class ProductDto {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 }

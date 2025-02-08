@@ -28,23 +28,22 @@ public class ProductService {
     }
 
     public void addProduct(Product prod) throws Exception {
-                validateCategory(prod.getCategory());
+
                 repo.save(prod);
     }
 
     public void updateProduct(Product prod) throws Exception {
-        validateCategory(prod.getCategory());
+
         repo.save(prod);
     }
 
     public void deleteByProductId(int id) {
         repo.deleteById(id);
     }
-    private void validateCategory(Category category) throws Exception {
-        if (! catRepo.existsById(category.getId()))
-        {
-            throw new Exception();
-        }
-    }
 
+    public Product findProductById(int id) {
+        return repo.findById(id).orElse(null);
+    }
 }
+
+

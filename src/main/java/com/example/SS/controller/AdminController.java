@@ -86,16 +86,28 @@ public class AdminController {
 
     }
 
-    @PutMapping("/products")
-    public ResponseEntity<String> updateProduct(@RequestBody ProductDto prod) {
+    @PutMapping("products/{id}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable int id,
+            @RequestBody ProductDto prod) {
         try {
-            Product product = modelMapper.map(prod,Product.class);
-            proService.updateProduct(product);
+            System.out.println("Received request body: " + prod);
+            // Check if the product exists in the database
+            Product existingProduct = proService.findProductById(id);
+            if (existingProduct == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+            }
+
+            // Map the incoming DTO to the existing product entity
+            modelMapper.map(prod, existingProduct);
+            existingProduct.setId(id);
+            // Save the updated product
+            proService.updateProduct(existingProduct);
+
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Product updated successfully!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Is either Category id correct or present");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating product: " + e.getMessage());
         }
-
     }
 
     @DeleteMapping("/products/{id}")
