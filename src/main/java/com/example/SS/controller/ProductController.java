@@ -39,9 +39,20 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ProductDto getProductById(@PathVariable int id){
+    public ProductDto getProductById(@PathVariable int id) {
         Product product = service.getProductById(id);
-        return modelMapper.map(product,ProductDto.class);
+
+        // Map Product entity to ProductDto
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+
+        // Map category name manually
+        if (product.getCategory() != null) {
+            productDto.setCategoryName(product.getCategory().getName());
+        } else {
+            productDto.setCategoryName("Not Available");
+        }
+
+        return productDto;
     }
 
 //    @PostMapping("/products")
