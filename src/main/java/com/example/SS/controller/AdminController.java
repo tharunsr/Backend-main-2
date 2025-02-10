@@ -45,11 +45,17 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/categories")
-    public ResponseEntity<String> updateCategory(@RequestBody CategoryDto catDto) {
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<String> updateCategory(@PathVariable int id, @RequestBody CategoryDto catDto) {
         try {
-            Category cat =  modelMapper.map(catDto,Category.class);
-            catService.updateCategory(cat);
+            Category existingCategory = catService.findCategoryById(id);
+            if (existingCategory == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found");
+            }
+
+            modelMapper.map(catDto,existingCategory);
+            existingCategory.setId(id);
+            catService.updateCategory(existingCategory);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Category updated successfully!");
         }
         catch (InvalidCategoryException ex) {

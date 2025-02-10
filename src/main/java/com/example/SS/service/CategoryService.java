@@ -40,4 +40,9 @@ public class CategoryService {
     public void deleteByCategoryId(int id) {
         repo.deleteById(id);
     }
+
+    public Category findCategoryById(int id) {
+
+        return repo.findById(id).orElse(null);
+    }
 }
