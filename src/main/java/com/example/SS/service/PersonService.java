@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
-    String token ;
 
     @Autowired
     private JWTService jwtservice;

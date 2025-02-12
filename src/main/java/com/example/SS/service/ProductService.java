@@ -42,9 +42,6 @@ public class ProductService {
     }
 
 
-    public Product findProductById(int id) {
-        return repo.findById(id).orElse(null);
-    }
 }
 
 

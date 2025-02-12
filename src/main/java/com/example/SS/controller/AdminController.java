@@ -6,6 +6,7 @@ import com.example.SS.dto.ProductDto;
 import com.example.SS.entities.Category;
 import com.example.SS.entities.Product;
 import com.example.SS.exception.InvalidCategoryException;
+import com.example.SS.repository.CategoryRepository;
 import com.example.SS.service.CategoryService;
 import com.example.SS.service.ProductService;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,9 @@ public class AdminController {
 
     @Autowired
     private ProductService proService;
+
+    @Autowired
+    private CategoryRepository catRepo;
 
 
 //    -------------------------------CATEGORY
@@ -95,26 +99,46 @@ public class AdminController {
     @PutMapping("products/{id}")
     public ResponseEntity<String> updateProduct(
             @PathVariable int id,
-            @RequestBody ProductDto prod) {
+            @RequestBody ProductDto productDto) {
         try {
-            System.out.println("Received request body: " + prod);
+            // Log request body
+            System.out.println("Received request body: " + productDto);
+
             // Check if the product exists in the database
-            Product existingProduct = proService.findProductById(id);
+            Product existingProduct = proService.getProductById(id);
             if (existingProduct == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
             }
 
+            // Fetch the category by ID from the database
+            Category category = getCategoryById(productDto.getCategoryId());
+
             // Map the incoming DTO to the existing product entity
-            modelMapper.map(prod, existingProduct);
-            existingProduct.setId(id);
+            mapProductDetails(existingProduct, productDto);
+
+            // Set the fetched category to the existing product
+            existingProduct.setCategory(category);
+
             // Save the updated product
             proService.updateProduct(existingProduct);
-
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Product updated successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating product: " + e.getMessage());
         }
     }
+
+    private Category getCategoryById(int categoryId) {
+        return catRepo.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+
+    private void mapProductDetails(Product existingProduct, ProductDto productDto) {
+        existingProduct.setName(productDto.getName());
+        existingProduct.setDescription(productDto.getDescription());
+        existingProduct.setPrice(productDto.getPrice());
+    }
+
+
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<String> deleteByProductId(@PathVariable int id) {
