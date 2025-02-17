@@ -50,7 +50,7 @@ public class CategoryServiceTest {
     @Test
     void testAddCategory() {
         Category newCategory = new Category();
-        newCategory.setName("Bodycare");
+        newCategory.setName("Bodyce");
 
         service.addCategory(newCategory);
       
